@@ -52,7 +52,15 @@ export default async function SellerOrdersPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
-                  {orders.map((order) => (
+                  {orders.map((order: {
+                    id: string
+                    amount: number
+                    platformFee: number
+                    status: string
+                    createdAt: Date
+                    product: { title: string }
+                    buyer: { name: string | null; email: string }
+                  }) => (
                     <tr key={order.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 font-mono text-xs text-gray-500">
                         {order.id.slice(0, 8)}
