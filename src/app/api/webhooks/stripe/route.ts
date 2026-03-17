@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma'
 import { stripe } from '@/lib/stripe'
+import type { ProductFile } from '@prisma/client'
 import { clerkClient } from '@clerk/nextjs/server'
 import { headers } from 'next/headers'
 import { NextResponse } from 'next/server'
@@ -75,7 +76,7 @@ export async function POST(req: Request) {
       const expiresAt = new Date(Date.now() + 72 * 60 * 60 * 1000)
 
       await prisma.downloadToken.createMany({
-        data: productFiles.map((file) => ({
+        data: productFiles.map((file: ProductFile) => ({
           orderId: order.id,
           productFileId: file.id,
           token: uuidv4(),
