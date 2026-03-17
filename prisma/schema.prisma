@@ -1,0 +1,81 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  clerkId   String   @unique
+  email     String
+  name      String?
+  createdAt DateTime @default(now())
+
+  sellerProfile SellerProfile?
+  orders        Order[]
+}
+
+model SellerProfile {
+  id              String   @id @default(uuid())
+  userId          String   @unique
+  stripeAccountId String?
+  createdAt       DateTime @default(now())
+
+  user     User      @relation(fields: [userId], references: [id])
+  products Product[]
+}
+
+model Product {
+  id              String   @id @default(uuid())
+  sellerId        String
+  title           String
+  description     String
+  price           Int
+  status          String   @default("draft")
+  stripeProductId String?
+  createdAt       DateTime @default(now())
+
+  seller       SellerProfile @relation(fields: [sellerId], references: [id])
+  productFiles ProductFile[]
+  orders       Order[]
+}
+
+model ProductFile {
+  id        String @id @default(uuid())
+  productId String
+  r2Key     String
+  filename  String
+  size      Int
+
+  product        Product         @relation(fields: [productId], references: [id])
+  downloadTokens DownloadToken[]
+}
+
+model Order {
+  id                    String   @id @default(uuid())
+  buyerId               String
+  productId             String
+  amount                Int
+  platformFee           Int
+  stripePaymentIntentId String?
+  status                String   @default("pending")
+  createdAt             DateTime @default(now())
+
+  buyer          User            @relation(fields: [buyerId], references: [id])
+  product        Product         @relation(fields: [productId], references: [id])
+  downloadTokens DownloadToken[]
+}
+
+model DownloadToken {
+  id            String    @id @default(uuid())
+  orderId       String
+  productFileId String
+  token         String    @unique @default(uuid())
+  expiresAt     DateTime
+  downloadedAt  DateTime?
+
+  order       Order       @relation(fields: [orderId], references: [id])
+  productFile ProductFile @relation(fields: [productFileId], references: [id])
+}
