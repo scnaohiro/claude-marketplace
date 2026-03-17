@@ -32,10 +32,10 @@ export default async function SellerDashboardPage() {
   })
 
   const totalRevenue = products.reduce(
-    (sum, p) => sum + p.orders.reduce((s, o) => s + o.amount, 0),
+    (sum: number, p) => sum + p.orders.reduce((s: number, o) => s + o.amount, 0),
     0
   )
-  const totalOrders = products.reduce((sum, p) => sum + p.orders.length, 0)
+  const totalOrders = products.reduce((sum: number, p) => sum + p.orders.length, 0)
 
   return (
     <div className="min-h-screen bg-gray-50">
